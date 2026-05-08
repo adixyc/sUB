@@ -1,4 +1,5 @@
 import os
+import re
 import asyncio
 import random
 import time
@@ -9,6 +10,7 @@ from flask import Flask
 from telethon import TelegramClient, events
 from telethon.sessions import StringSession
 from telethon.tl.functions.contacts import BlockRequest, UnblockRequest
+from telethon.tl.functions.users import GetFullUserRequest
 from telethon.tl.types import MessageEntityMentionName
 
 # ---------------- WEB SERVER ---------------- #
@@ -28,19 +30,61 @@ def keep_alive():
 
 # ---------------- TELEGRAM CONFIG ---------------- #
 
-api_id = 39905812
-api_hash = '47c868709156df4c03c3c40c8b78518c'
-session = "1BVtsOLoBuy0znlRIx7OYESvSkzisDcItDVMop-NxEkPSZmGfYccQJebiiXg3vyvSIec3GPPieLBbKSEzfwLFhKMbdzx68jQjxXR3M_JBURWrCOxnkFlMNQt1EhYk0s_g1LNLEasFD7ZpzOjGUHwH3Ch4bH9iSOIhfg8RtU7xBOK086TMWMt6t8sBvt-wZ2LzCb1q68fOhA0ksR81aOZ2GZm4F7Xjb1ZoIZiBTU35G9r2xeoGGzpvL5FuETfnZ7h_XhFZmPco_l19ZoEViUsxEiMC2qL03i6vLZ5Zd1txQakeLVxT25o_3xpkrsAjaIFinBzSQSNifWlP8sbc-gKVxPBwWQ_rO2w="
+api_id = 32491346
+api_hash = 'f22c6f7d85b0ebede93491385c6a75ab'
+
+session = "1BVtsOI8Bu0mIvcuzKFqUIM_PiO8Mwqy2M8OIr7h7ciIVmE3MbnYkXXRMHgIRAAztt3iM7FPrkvUQt2eQSckntJTnQ-rPIbJ0-AIQx5OsT5ynwtiWoAyfEt0n_RPS5_cRFv-5pNkCw5c3zazdqCP55AjuoPDIi8IxQyMhzpyRoR_KF5IleXh3zg6Cd09d3EhqiX4b3darWEKB3SbQ8K89DFLLVWxUpk7aRqyQ7fDlJGOsCbj4cywqyL8WKjP-Ky5Ahyru6ZgYejF7VDlzqPDDJXBMZMyUD2369T9LmgzNZxTQEDJu6CUOp_JuvGV_1RVeEI4iLhuWOgdh1PJ5bZsmU-3hZoBmCP4="
 
 client = TelegramClient(StringSession(session), api_id, api_hash)
 
 TARGET_GROUP_ID = -1003623091628
-GROUP_LINK = "@WIFE_SWAPPING_GF"
+GROUP_LINK = "@SWAPPINGe_WIFE"
 
 replied_users = set()
 start_time = time.time()
 
-quotes = ["Hi", "Hii", "Addd Mee", "Heloo", "Nice"]
+quotes = [
+    "Hi",
+    "Hii",
+    "Addd Mee",
+    "Heloo",
+    "Fún?",
+    "F17 from DeIhi"
+]
+
+# ---------------- BIO CHECK ---------------- #
+
+ALLOWED_USERNAMES = [
+    "@SWAPPINGe_WIFE",
+    "@STAR_NAVYA",
+    "@niximia"
+]
+
+async def has_link_in_bio(user_id):
+    try:
+        full = await client(GetFullUserRequest(user_id))
+        bio = full.full_user.about or ""
+
+        # remove allowed usernames
+        for allowed in ALLOWED_USERNAMES:
+            bio = bio.replace(allowed, "")
+
+        patterns = [
+            r"@\w+",
+            r"t\.me/\w+",
+            r"http[s]?://",
+            r"www\."
+        ]
+
+        for pattern in patterns:
+            if re.search(pattern, bio, re.IGNORECASE):
+                return True
+
+        return False
+
+    except Exception as e:
+        print("Bio check error:", e)
+        return False
 
 # ---------------- BACKGROUND TASKS ---------------- #
 
@@ -56,39 +100,51 @@ async def fake_typing():
 async def send_quotes():
     while True:
         dialogs = await client.get_dialogs()
+
         for dialog in dialogs:
             if dialog.is_group:
                 try:
-                    await client.send_message(dialog.id, random.choice(quotes))
-                    await asyncio.sleep(10)
+                    await client.send_message(
+                        dialog.id,
+                        random.choice(quotes)
+                    )
+
+                    await asyncio.sleep(40)
+
                 except Exception:
                     pass
-        await asyncio.sleep(300)
+
+        await asyncio.sleep(330)
 
 # ---------------- PRIVATE AUTO REPLY ---------------- #
 
 @client.on(events.NewMessage(incoming=True))
 async def private_auto_reply(event):
-    if event.is_private and not event.out:
-        user_id = event.sender_id
-        msg = event.raw_text.lower()
 
-        # first auto reply
+    if event.is_private and not event.out:
+
+        user_id = event.sender_id
+
         if user_id not in replied_users:
+
             replied_users.add(user_id)
 
             await asyncio.sleep(2)
 
             await event.respond(
-                f"Hi dear ❤️ Thank you for messaging me.\n\n"
-                f"Please join our group:\n{GROUP_LINK}\n\n"
-                f"After joining, message me again 💋"
+                f"Hi dear ❤️\n"
+                f"Thank you for messaging me.\n\n"
+                f"Please join our group:\n"
+                f"{GROUP_LINK}\n\n"
+                f"After joining, message me again 💋\n\n"
+                f"Don't leave the group. Couple show will begin soon 🥰"
             )
 
 # ---------------- KEYWORD REPLY ---------------- #
 
 @client.on(events.NewMessage(incoming=True, pattern=r'(?i)^demo$'))
 async def demo_reply(event):
+
     if event.is_private:
         await event.reply("demo paid hai babe.. 100rs only")
 
@@ -96,11 +152,15 @@ async def demo_reply(event):
 
 @client.on(events.ChatAction(chats=TARGET_GROUP_ID))
 async def welcome_new_user(event):
+
     if event.user_joined or event.user_added:
+
         users = await event.get_users()
 
         for user in users:
+
             name = user.first_name or "User"
+
             message = f"Hello {name}, DM ME FOR FUN BABY 💋"
 
             entity = MessageEntityMentionName(
@@ -115,44 +175,84 @@ async def welcome_new_user(event):
                 formatting_entities=[entity]
             )
 
+# ---------------- DELETE USERS WITH LINKS IN BIO ---------------- #
+
+@client.on(events.NewMessage(chats=TARGET_GROUP_ID))
+async def delete_users_with_links(event):
+
+    try:
+        sender = await event.get_sender()
+
+        # ignore bots and yourself
+        if sender.bot or sender.is_self:
+            return
+
+        bad_bio = await has_link_in_bio(sender.id)
+
+        if bad_bio:
+
+            await event.delete()
+
+            print(f"Deleted message from {sender.id}")
+
+    except Exception as e:
+        print("Delete Error:", e)
+
 # ---------------- COMMANDS ---------------- #
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.ping"))
 async def ping(event):
+
     start = time.time()
+
     msg = await event.edit("Pinging...")
+
     end = time.time()
+
     await msg.edit(f"PONG! {round((end-start)*1000)} ms")
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.id"))
 async def get_id(event):
+
     await event.edit(f"CHAT ID: `{event.chat_id}`")
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.time"))
 async def time_cmd(event):
+
     now = datetime.now().strftime("%H:%M:%S")
+
     await event.edit(f"CURRENT TIME: {now}")
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.alive"))
 async def alive(event):
+
     uptime = int(time.time() - start_time)
+
     await event.edit(f"⚡ Alive\nUptime: {uptime} sec")
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.block"))
 async def block_user(event):
+
     if event.is_private:
+
         await client(BlockRequest(event.chat_id))
+
         await event.edit("Blocked.")
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.unblock"))
 async def unblock_user(event):
+
     if event.is_private:
+
         await client(UnblockRequest(event.chat_id))
+
         await event.edit("Unblocked.")
 
 @client.on(events.NewMessage(outgoing=True, pattern=r"\.spam"))
 async def spam(event):
+
     args = event.raw_text.split(maxsplit=2)
+
     if len(args) < 3:
         return await event.edit("Usage: .spam count text")
 
@@ -164,31 +264,35 @@ async def spam(event):
     for _ in range(count):
         await client.send_message(event.chat_id, text)
 
-@client.on(events.NewMessage(outgoing=True, pattern=r"\.rl"))
+@client.on(events.NewMessage(outgoing=True, pattern=r"\.dm"))
 async def price_list(event):
+
     text = """
-🌸 NAVYA AVAILABLE 🌸
-💬 SEX CHAT
-• 10 min → ₹350
-• 20 min → ₹740
-
-📞 VOICE CALL
-• 5 min → ₹220
-• 10 min → ₹450
-
-🎥 VIDEO CALL
-• 5 min → ₹500
-• 10 min → ₹990
-
-Send payment screenshot after payment.
+🌸 VC SERVICE - @STAR_NAVYA
+🌸 TG/WA ID - @niximia
 """
+
     await event.edit(text)
 
+# ---------------- AUTO DELETE ALL GROUP MSGS ---------------- #
+
+@client.on(events.NewMessage(chats=TARGET_GROUP_ID))
+async def auto_delete_group_messages(event):
+
+    try:
+        await asyncio.sleep(60)
+
+        await event.delete()
+
+    except Exception as e:
+        print("Auto-delete error:", e)
 
 # ---------------- MAIN ---------------- #
 
 async def main():
+
     await client.start()
+
     print("Userbot running...")
 
     asyncio.create_task(fake_typing())
