@@ -44,12 +44,13 @@ replied_users = set()
 start_time = time.time()
 
 quotes = [
-    "Hi",
-    "Hii",
-    "Addd Mee",
-    "Heloo",
-    "Fún?",
-    "F17 from DeIhi"
+    "HeIIo",
+    "Hey Boys",
+    "Adds Me",
+    "HeIIo Boys",
+    "I'm OnIine",
+    "F17 from DeIhi",
+    "Try not to c*m chaIIenge"
 ]
 
 # ---------------- BIO CHECK ---------------- #
