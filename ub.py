@@ -30,10 +30,10 @@ def keep_alive():
 
 # ---------------- TELEGRAM CONFIG ---------------- #
 
-api_id = 32491346
-api_hash = 'f22c6f7d85b0ebede93491385c6a75ab'
+api_id = 37282522
+api_hash = '689041412e1abb0f86b19975b4c06b86'
 
-session = "1BVtsOI8Bu0mIvcuzKFqUIM_PiO8Mwqy2M8OIr7h7ciIVmE3MbnYkXXRMHgIRAAztt3iM7FPrkvUQt2eQSckntJTnQ-rPIbJ0-AIQx5OsT5ynwtiWoAyfEt0n_RPS5_cRFv-5pNkCw5c3zazdqCP55AjuoPDIi8IxQyMhzpyRoR_KF5IleXh3zg6Cd09d3EhqiX4b3darWEKB3SbQ8K89DFLLVWxUpk7aRqyQ7fDlJGOsCbj4cywqyL8WKjP-Ky5Ahyru6ZgYejF7VDlzqPDDJXBMZMyUD2369T9LmgzNZxTQEDJu6CUOp_JuvGV_1RVeEI4iLhuWOgdh1PJ5bZsmU-3hZoBmCP4="
+session = "1BVtsOIMBu52GYeciAlqB0mdrvECihota_NZjDM5ozkkRNPEObRNvu8Prp5TyxddgdBqGhEIJrB2ginUN5Qq93XveVJb0_-3DK4EJKRdVC6gmZB8W0LAT-IGOFsKUeJQxc-BrvReo-oT8MZYfeiDZTR0h3rQ1RU2OlDnr_JnpN0w9bl-c0IECORMxLHzc_90l7w7Qr6bIkpPKi8M0pJhiDUFrb1l53aKCNfZ9bE_x4vzkJh2TUNI_B-Us0wOtnbOgv3mWnyKnJMwjJNik83fqplU6wqPfiaf3S4YUfvjVZL46mr3ebjq7-JZv8_xzaxr1Ohml11bg97WQdPlxzaFZOqV1IVkWTxU="
 
 client = TelegramClient(StringSession(session), api_id, api_hash)
 
@@ -57,7 +57,7 @@ quotes = [
 
 ALLOWED_USERNAMES = [
     "@SWAPPINGe_WIFE",
-    "@STAR_NAVYA",
+    "@STAR_Shana",
     "@niximia"
 ]
 
